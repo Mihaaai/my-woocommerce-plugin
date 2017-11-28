@@ -1,0 +1,29 @@
+/*For the moment, it does not work*/
+
+
+
+
+/*Code for wp-cards/includes/css/components.css */
+
+.banner-jumbotron .container h1{
+	margin-left : 15px;
+	margin-bottom : 45px;
+	font-size : 50px;
+}
+
+.banner-jumbotron .container p{
+	margin-left : 15px;
+	margin-bottom : 80px;
+	font-size : 25px;
+}
+
+.banner-jumbotron .btn-toolbar>a{
+	margin-left : 15px;
+	font-size : 20px;
+	color : black;
+	font-weight: bold;
+	text-decoration : underline;
+}
+/**************************************/
+
+
