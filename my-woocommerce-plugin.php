@@ -28,10 +28,10 @@
 	/** END - REMOVE WOOTHEMES NAVIGATION **/
 
    /*Filter storefront home page*/
-   add_action('init','my_storefront_homepage');
+   /*add_action('init','my_storefront_homepage');
    function my_storefront_homepage(){
       remove_action('storefront_homepage','storefront_homepage_header',10);
-   }
+   }*/
 
    /* Filter and update storefront homepage content*/
    add_action('init','my_storefront_homepage_content',10);
@@ -85,13 +85,74 @@
       }
    }
 
+   /*Remove "Add to cart" button from the shop page and the simple product page*/
+   add_action('init','my_remove_add_to_cart_button',10);
+   function my_remove_add_to_cart_button(){
+      remove_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart',10);
+      remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_add_to_cart',30);
+   }
 
-// /*Remove product image zoom on the single page*/
-// add_action('after_setup_theme','remove_product_image_features',10);
-// function remove_product_image_features(){
-//    remove_theme_support( 'wc-product-gallery-zoom' );
-// }
+  /*Remove and add own copyright text at the end of the web page */
+  //add_action('init','my_copyright_footer_text',10);
+  function my_credit_text(){
+    ?>
+    <div class="site-info">
+      <?php echo esc_html( apply_filters( 'storefront_copyright_text', $content = '&copy; ' . get_bloginfo( 'name' ) . ' ' . date( 'Y' ) ) ); ?>
+      <?php if ( apply_filters( 'storefront_credit_link', true ) ) { ?>
+      <br /> <?php printf( esc_attr__( '%1$s designed by %2$s. Customised by %3$s.', 'storefront' ), 'Storefront', '<a href="http://www.woocommerce.com" title="WooCommerce - The Best eCommerce Platform for WordPress" rel="author">WooCommerce</a>', '<a href="https://github.com/Mihaaai" title="Mihai Ghidoveanu - junior developer" rel="author">a curious developer</a>' ); ?>
+      <?php } ?>
+    </div><!-- .site-info -->
+    <?php
+ 
+  }
+  function my_copyright_footer_text(){
+    remove_action('storefront_footer','storefront_credit',20);
+    add_action('storefront_footer','my_credit_text',20);
+  }
 
+/*Remove product image zoom on the single page -- this is present on the functions.php of the current theme
+add_action('after_setup_theme','remove_product_image_features',10);
+function remove_product_image_features(){
+   remove_theme_support( 'wc-product-gallery-zoom' );
+} */
+
+/* This parts makes the layout for the product categories and the products separated 
+   **********Not working yet***************
+add_action('woocommerce_before_shop_loop','my_product_categories',50);*/
+function my_product_categories($args = array()){
+   $parentid = get_queried_object_id();
+         
+   $args = array(
+       'parent' => $parentid
+   );
+    
+   $terms = get_terms( 'product_cat', $args );
+    
+   if ( $terms ) 
+   {
+            
+      echo '<ul class="product-cats">';
+        
+      foreach ( $terms as $term ) 
+      {
+                      
+         echo '<li class="category">';                 
+                  
+             woocommerce_subcategory_thumbnail( $term );
+              
+             echo '<h2>';
+                 echo '<a href="' .  esc_url( get_term_link( $term ) ) . '" class="' . $term->slug . '">';
+                     echo $term->name;
+                 echo '</a>';
+             echo '</h2>';
+                                                                  
+         echo '</li>';
+      }
+        
+      echo '</ul>';
+    
+   }
+}
 
 
 ?>
