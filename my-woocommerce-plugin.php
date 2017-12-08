@@ -110,49 +110,75 @@
     add_action('storefront_footer','my_credit_text',20);
   }
 
-/*Remove product image zoom on the single page -- this is present on the functions.php of the current theme
-add_action('after_setup_theme','remove_product_image_features',10);
-function remove_product_image_features(){
-   remove_theme_support( 'wc-product-gallery-zoom' );
-} */
+  /*Remove product image zoom on the single page -- this is present on the functions.php of the current theme
+  add_action('after_setup_theme','remove_product_image_features',10);
+  function remove_product_image_features(){
+     remove_theme_support( 'wc-product-gallery-zoom' );
+  } */
 
-/* This parts makes the layout for the product categories and the products separated 
-   **********Not working yet***************
-add_action('woocommerce_before_shop_loop','my_product_categories',50);*/
-function my_product_categories($args = array()){
-   $parentid = get_queried_object_id();
-         
-   $args = array(
-       'parent' => $parentid
-   );
-    
-   $terms = get_terms( 'product_cat', $args );
-    
-   if ( $terms ) 
-   {
-            
-      echo '<ul class="product-cats">';
-        
-      foreach ( $terms as $term ) 
-      {
-                      
-         echo '<li class="category">';                 
-                  
-             woocommerce_subcategory_thumbnail( $term );
+  /* This parts makes the layout for the product categories and the products separated 
+     **********Not working yet***************
+  add_action('woocommerce_before_shop_loop','my_product_categories',50);*/
+  function my_product_categories($args = array()){
+     $parentid = get_queried_object_id();
+           
+     $args = array(
+         'parent' => $parentid
+     );
+      
+     $terms = get_terms( 'product_cat', $args );
+      
+     if ( $terms ) 
+     {
               
-             echo '<h2>';
-                 echo '<a href="' .  esc_url( get_term_link( $term ) ) . '" class="' . $term->slug . '">';
-                     echo $term->name;
-                 echo '</a>';
-             echo '</h2>';
-                                                                  
-         echo '</li>';
-      }
-        
-      echo '</ul>';
-    
-   }
-}
+        echo '<ul class="product-cats">';
+          
+        foreach ( $terms as $term ) 
+        {
+                        
+           echo '<li class="category">';                 
+                    
+               woocommerce_subcategory_thumbnail( $term );
+                
+               echo '<h2>';
+                   echo '<a href="' .  esc_url( get_term_link( $term ) ) . '" class="' . $term->slug . '">';
+                       echo $term->name;
+                   echo '</a>';
+               echo '</h2>';
+                                                                    
+           echo '</li>';
+        }
+          
+        echo '</ul>';
+      
+     }
+  }
 
+
+  /** 
+    Makes the contact bar fixed for everyone, except for the admin_like users
+    Because when the contact bar is fixed, the admin bar is not visible anymore on the frontend
+  */
+  add_action('plugins_loaded','my_display_admin_bar');
+  function my_display_admin_bar()
+  {
+      //get the contact bar instance so we can set its fixed status
+     $contact_bar = Speed_Contact_Bar::get_instance();
+
+      // get current user 
+     $user = wp_get_current_user();
+
+     //make the contact bar fixed if the user is neither shop_manager, nor administrator
+     if ( isset( $user['roles'][0] ) && ($user['roles'][0] == 'shop_manager' || $user['roles'][0] == 'administrator'))
+     {
+        $contact_bar->set_fixed(0);
+     } 
+     else
+     {
+        $contact_bar->set_fixed(1);
+     }
+            
+  }
+  
 
 ?>
