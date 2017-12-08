@@ -94,6 +94,10 @@
 
   /*Remove and add own copyright text at the end of the web page */
   //add_action('init','my_copyright_footer_text',10);
+  /*function my_copyright_footer_text(){
+    remove_action('storefront_footer','storefront_credit',20);
+    add_action('storefront_footer','my_credit_text',20);
+  }
   function my_credit_text(){
     ?>
     <div class="site-info">
@@ -103,18 +107,13 @@
       <?php } ?>
     </div><!-- .site-info -->
     <?php
- 
-  }
-  function my_copyright_footer_text(){
-    remove_action('storefront_footer','storefront_credit',20);
-    add_action('storefront_footer','my_credit_text',20);
-  }
+  }*/
 
-  /*Remove product image zoom on the single page -- this is present on the functions.php of the current theme
-  add_action('after_setup_theme','remove_product_image_features',10);
-  function remove_product_image_features(){
+  /*Remove product image zoom on the single page -- this is present on the functions.php of the current theme */
+  //add_action('after_setup_theme','my_remove_product_image_features',10);
+  function my_remove_product_image_features(){
      remove_theme_support( 'wc-product-gallery-zoom' );
-  } */
+  } 
 
   /* This parts makes the layout for the product categories and the products separated 
      **********Not working yet***************
@@ -154,7 +153,6 @@
      }
   }
 
-
   /** 
     Makes the contact bar fixed for everyone, except for the admin_like users
     Because when the contact bar is fixed, the admin bar is not visible anymore on the frontend
@@ -169,7 +167,7 @@
      $user = wp_get_current_user();
 
      //make the contact bar fixed if the user is neither shop_manager, nor administrator
-     if ( isset( $user['roles'][0] ) && ($user['roles'][0] == 'shop_manager' || $user['roles'][0] == 'administrator'))
+     if ( isset( $user->roles[0] ) && ($user->roles[0] == 'shop_manager' || $user->roles[0] == 'administrator'))
      {
         $contact_bar->set_fixed(0);
      } 
@@ -179,6 +177,25 @@
      }
             
   }
+
+
+  /**
+    The handheld footer is a footer menu that is displayed on mobile screens
+    this function tells the menu to stop displaying certain items
+  */
+  add_action('after_setup_theme','my_handheld_footer');
+  function my_handheld_footer(){
+    add_filter( 'storefront_handheld_footer_bar_links', 'my_remove_handheld_footer_links' );  
+  }
+  function my_remove_handheld_footer_links( $links ) 
+  {
+    unset( $links['my-account'] );
+    //unset( $links['search'] );
+    unset( $links['cart'] );
+
+    return $links;
+  } 
   
 
 ?>
+
